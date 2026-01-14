@@ -1,11 +1,22 @@
 'use server';
 
-import { addContentItem, updateContentItem, deleteContentItem } from '@/lib/storage';
+import { createContentItem, updateContentItem, deleteContentItem } from '@/lib/data';
 import { ContentItem, ContentStatus, Platform } from '@/types';
+import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
-import { v4 as uuidv4 } from 'uuid';
+import { redirect } from 'next/navigation';
+
+async function getAuthenticatedUser() {
+    const session = await getSession();
+    if (!session) {
+        throw new Error('Unauthorized');
+    }
+    return session;
+}
 
 export async function createItem(formData: FormData) {
+    const session = await getAuthenticatedUser();
+
     const title = formData.get('title') as string;
     const platform = formData.get('platform') as Platform;
     const status = formData.get('status') as ContentStatus;
@@ -14,8 +25,7 @@ export async function createItem(formData: FormData) {
     const isSponsored = formData.get('isSponsored') === 'on';
     const notes = formData.get('notes') as string;
 
-    const newItem: ContentItem = {
-        id: uuidv4(),
+    await createContentItem({
         title,
         platform,
         status,
@@ -23,21 +33,16 @@ export async function createItem(formData: FormData) {
         targetDate: new Date(date).toISOString(),
         isSponsored,
         notes,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-    };
+    }, session.userId);
 
-    await addContentItem(newItem);
-    revalidatePath('/');
-    revalidatePath('/kanban');
-    revalidatePath('/calendar');
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/kanban');
+    revalidatePath('/dashboard/calendar');
 }
 
 export async function updateItemAction(id: string, formData: FormData) {
-    // We'll need to fetch existing item or pass all fields
-    // For simplicity, we assume all fields are passed or we partial update if we changed storage logic
-    // But storage `updateContentItem` expects full item. 
-    // We'll just construct it from formData, preserving ID.
+    const session = await getAuthenticatedUser();
+
     const title = formData.get('title') as string;
     const platform = formData.get('platform') as Platform;
     const status = formData.get('status') as ContentStatus;
@@ -46,15 +51,7 @@ export async function updateItemAction(id: string, formData: FormData) {
     const isSponsored = formData.get('isSponsored') === 'on';
     const notes = formData.get('notes') as string;
 
-    // We are recreating the item. In real app, we'd fetch and merge.
-    // We also need `createdAt` which isn't in form.
-    // For MVP, we'll reset createdAt or use current date if we don't have it.
-    // Actually, better: read the existing item first in the action? 
-    // No, `storage` module is better used.
-    // Let's just update what we have.
-
-    const updatedItem: ContentItem = {
-        id,
+    await updateContentItem(id, session.userId, {
         title,
         platform,
         status,
@@ -62,12 +59,9 @@ export async function updateItemAction(id: string, formData: FormData) {
         targetDate: new Date(date).toISOString(),
         isSponsored,
         notes,
-        createdAt: new Date().toISOString(), // Warning: resets createdAt
-        updatedAt: new Date().toISOString(),
-    };
+    });
 
-    await updateContentItem(updatedItem);
-    revalidatePath('/');
-    revalidatePath('/kanban');
-    revalidatePath('/calendar');
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/kanban');
+    revalidatePath('/dashboard/calendar');
 }

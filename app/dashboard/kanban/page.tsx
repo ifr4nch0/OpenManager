@@ -1,10 +1,15 @@
 import { KanbanView } from '@/components/views/kanban-view';
-import { getContentItems } from '@/lib/storage';
+import { getContentItems } from '@/lib/data';
+import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function KanbanPage() {
-    const items = await getContentItems();
+    const session = await getSession();
+    if (!session) redirect('/login');
+
+    const items = await getContentItems(session.userId);
 
     return (
         <div className="space-y-6">
