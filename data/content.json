@@ -1,0 +1,47 @@
+[
+    {
+        "id": "1",
+        "title": "Next.js 14 Tutorial for Beginners",
+        "platform": "YouTube",
+        "status": "Published",
+        "type": "Video",
+        "targetDate": "2024-03-10T10:00:00.000Z",
+        "isSponsored": false,
+        "notes": "Cover App Router and Server Actions",
+        "createdAt": "2024-03-01T10:00:00.000Z",
+        "updatedAt": "2024-03-01T10:00:00.000Z"
+    },
+    {
+        "id": "2",
+        "title": "Top 5 VS Code Extensions 2024",
+        "platform": "Short",
+        "status": "Editing",
+        "type": "Video",
+        "targetDate": "2024-03-15T10:00:00.000Z",
+        "isSponsored": false,
+        "createdAt": "2024-03-05T10:00:00.000Z",
+        "updatedAt": "2024-03-05T10:00:00.000Z"
+    },
+    {
+        "id": "3",
+        "title": "Weekly Newsletter #42",
+        "platform": "Email",
+        "status": "Script",
+        "type": "Post",
+        "targetDate": "2024-03-20T10:00:00.000Z",
+        "isSponsored": true,
+        "createdAt": "2024-03-08T10:00:00.000Z",
+        "updatedAt": "2024-03-08T10:00:00.000Z"
+    },
+    {
+        "id": "4",
+        "title": "React vs Vue 2025",
+        "platform": "YouTube",
+        "status": "Idea",
+        "type": "Video",
+        "targetDate": "2024-04-01T10:00:00.000Z",
+        "isSponsored": false,
+        "createdAt": "2024-03-10T10:00:00.000Z",
+        "updatedAt": "2024-03-10T10:00:00.000Z"
+    }
+]
