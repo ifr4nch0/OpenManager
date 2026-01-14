@@ -2,13 +2,14 @@ import Database from 'better-sqlite3';
 import path from 'path';
 
 const dbPath = path.join(process.cwd(), 'openmanager.db');
+console.log('Opening database at:', dbPath);
 
-export const db = new Database(dbPath);
+export const db = new Database(dbPath, { verbose: console.log });
 db.pragma('journal_mode = WAL');
 
 // Initialize Schema
 function initDb() {
-    const userTable = `
+  const userTable = `
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -19,7 +20,7 @@ function initDb() {
     );
   `;
 
-    const contentTable = `
+  const contentTable = `
     CREATE TABLE IF NOT EXISTS content_items (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -36,8 +37,8 @@ function initDb() {
     );
   `;
 
-    db.exec(userTable);
-    db.exec(contentTable);
+  db.exec(userTable);
+  db.exec(contentTable);
 }
 
 initDb();
