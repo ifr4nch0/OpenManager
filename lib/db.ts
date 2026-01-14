@@ -8,8 +8,8 @@ if (url) {
   dbConfig = { url, authToken: process.env.TURSO_AUTH_TOKEN };
 } else {
   const dbPath = path.join(process.cwd(), 'openmanager.db');
-  // Handle Windows paths for file URL
-  const fileUrl = `file:${dbPath.replace(/\\/g, '/')}`;
+  // Handle Windows paths for file URL - strict URI format
+  const fileUrl = `file:///${dbPath.replace(/\\/g, '/')}`;
   console.log('Using local database:', fileUrl);
   dbConfig = { url: fileUrl };
 }
