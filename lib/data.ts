@@ -59,7 +59,7 @@ export async function getContentItems(userId: string): Promise<ContentItem[]> {
         type: row.type as string,
         targetDate: row.targetDate as string,
         isSponsored: Boolean(row.isSponsored),
-        notes: row.notes as string | null,
+        notes: (row.notes as string | null) || undefined,
         createdAt: row.createdAt as string,
         updatedAt: row.updatedAt as string,
         userId: row.userId as string
