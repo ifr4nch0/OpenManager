@@ -1,14 +1,17 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { createClient } from '@libsql/client';
 
-const dbPath = path.join(process.cwd(), 'openmanager.db');
-console.log('Opening database at:', dbPath);
+const url = process.env.TURSO_DATABASE_URL || 'file:openmanager.db';
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
-export const db = new Database(dbPath, { verbose: console.log });
-db.pragma('journal_mode = WAL');
+console.log('Connecting to database at:', url);
 
-// Initialize Schema
-function initDb() {
+export const db = createClient({
+  url,
+  authToken,
+});
+
+// Helper to initialize schema since LibSQL doesn't verify on connect same way
+export async function initDb() {
   const userTable = `
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -37,8 +40,10 @@ function initDb() {
     );
   `;
 
-  db.exec(userTable);
-  db.exec(contentTable);
+  await db.execute(userTable);
+  await db.execute(contentTable);
 }
 
-initDb();
+// Auto-run init in dev/build (careful in serverless, better to call explicitly or check existence)
+// For simplicity in this app, we'll run it on import but catch errors if it fails strictly.
+initDb().catch(console.error);
