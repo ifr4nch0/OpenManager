@@ -1,14 +1,20 @@
 import { createClient } from '@libsql/client';
+import path from 'path';
 
-const url = process.env.TURSO_DATABASE_URL || 'file:openmanager.db';
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const url = process.env.TURSO_DATABASE_URL;
+let dbConfig;
 
-console.log('Connecting to database at:', url);
+if (url) {
+  dbConfig = { url, authToken: process.env.TURSO_AUTH_TOKEN };
+} else {
+  const dbPath = path.join(process.cwd(), 'openmanager.db');
+  // Handle Windows paths for file URL
+  const fileUrl = `file:${dbPath.replace(/\\/g, '/')}`;
+  console.log('Using local database:', fileUrl);
+  dbConfig = { url: fileUrl };
+}
 
-export const db = createClient({
-  url,
-  authToken,
-});
+export const db = createClient(dbConfig);
 
 // Helper to initialize schema since LibSQL doesn't verify on connect same way
 export async function initDb() {
